@@ -23,15 +23,12 @@ public class Encrypt {
         Scanner fileIn;
         PrintStream out;
         String answer = "";
-        
-        System.out.println("File to encrypt/decrypt:");
-        String fileName = in.next();
-        System.out.println("Output File:");
-        String outFile = in.next();
 
         // Tries to find an input file
         while (true) {
             try {
+                System.out.println("File to encrypt/decrypt:");
+                String fileName = in.next();
                 fileIn = new Scanner(new File(fileName));
                 break;
             } catch (Exception e) {
@@ -42,6 +39,8 @@ public class Encrypt {
         // Tries to make an output file
         while (true) {
             try {
+                System.out.println("Output File:");
+                String outFile = in.next();
                 out = new PrintStream(new FileOutputStream(outFile));
                 break;
             } catch (Exception e) {
