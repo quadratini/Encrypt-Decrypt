@@ -17,8 +17,10 @@ import java.io.PrintStream;
 import java.io.FileOutputStream;
 
 public class Encrypt {
-    
+    public static final String FILES_DIR = "files/";
+
     public static void main(String[] args) {
+
         Scanner in = new Scanner(System.in);
         Scanner fileIn;
         PrintStream out;
@@ -28,7 +30,7 @@ public class Encrypt {
         while (true) {
             try {
                 System.out.println("File to encrypt/decrypt:");
-                String fileName = in.next();
+                String fileName = FILES_DIR + in.next();
                 fileIn = new Scanner(new File(fileName).getAbsolutePath());
                 break;
             } catch (Exception e) {
@@ -40,7 +42,7 @@ public class Encrypt {
         while (true) {
             try {
                 System.out.println("Output File:");
-                String outFile = in.next();
+                String outFile = FILES_DIR + in.next();
                 out = new PrintStream(new FileOutputStream(outFile));
                 break;
             } catch (Exception e) {
