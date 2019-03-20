@@ -20,21 +20,35 @@ public class Encrypt {
     
     public static void main(String[] args) {
         Scanner in = new Scanner(System.in);
-        Scanner fileIn = null;
-        PrintStream out = null;
+        Scanner fileIn;
+        PrintStream out;
         String answer = "";
         
         System.out.println("File to encrypt/decrypt:");
         String fileName = in.next();
         System.out.println("Output File:");
         String outFile = in.next();
-        
-        try {
-            fileIn = new Scanner(new File(fileName));
-            out = new PrintStream(new FileOutputStream(outFile));            
-        } catch(Exception e) {
-            System.out.println("Can't find file.");
+
+        // Tries to find an input file
+        while (true) {
+            try {
+                fileIn = new Scanner(new File(fileName));
+                break;
+            } catch (Exception e) {
+                System.out.println("Can't find file.");
+            }
         }
+
+        // Tries to make an output file
+        while (true) {
+            try {
+                out = new PrintStream(new FileOutputStream(outFile));
+                break;
+            } catch (Exception e) {
+                System.out.println("Cannot create output file.");
+            }
+        }
+
         while (!answer.equalsIgnoreCase("encrypt") && !answer.equalsIgnoreCase("decrypt")) {
             System.out.println("Encrypt or decrypt?");
             String ende = in.next();
