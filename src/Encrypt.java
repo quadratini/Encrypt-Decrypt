@@ -29,7 +29,7 @@ public class Encrypt {
             try {
                 System.out.println("File to encrypt/decrypt:");
                 String fileName = in.next();
-                fileIn = new Scanner(new File(fileName));
+                fileIn = new Scanner(new File(fileName).getAbsolutePath());
                 break;
             } catch (Exception e) {
                 System.out.println("Can't find file.");
