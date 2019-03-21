@@ -10,17 +10,21 @@
 * @verison 03/17/2019
 *
 */
+import javax.print.attribute.standard.Media;
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
+import javax.sound.sampled.FloatControl;
+import java.io.*;
 import java.nio.file.Files;
 import java.util.Scanner;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.PrintStream;
-import java.io.FileOutputStream;
 
 public class Encrypt {
     public static final String FILES_DIR = "files/";
 
     public static void main(String[] args) {
+
+        AudioInputStream audioIn = null;
 
         Scanner in = new Scanner(System.in);
         Scanner fileIn;
@@ -28,6 +32,8 @@ public class Encrypt {
         char answer = ' ';
 
         // Tries to find an input file
+        playSound(audioIn, "wav/start.wav");
+
         while (true) {
             try {
                 System.out.println("File to encrypt/decrypt:");
@@ -38,12 +44,16 @@ public class Encrypt {
                 }
                 fileIn = new Scanner(new File(fileName));
                 break;
-            } catch (Exception e) {
-                System.out.println("Can't find file.");
+            } catch(Exception e) {
+                playSound(audioIn, "wav/fail.wav");
+                if (e instanceof FileNotFoundException) {
+                    System.out.println("Can't find file.");
+                }
             }
         }
 
         // Tries to make an output file
+        playSound(audioIn, "wav/start2.wav");
         while (true) {
             try {
                 System.out.println("Output File:");
@@ -51,10 +61,12 @@ public class Encrypt {
                 out = new PrintStream(new FileOutputStream(outFile));
                 break;
             } catch (Exception e) {
+                playSound(audioIn, "wav/fail.wav");
                 System.out.println("Cannot create output file.");
             }
         }
 
+        playSound(audioIn, "wav/start3.wav");
         // Asks if user wants to encrypt or decrypt
         while (answer != 'd' && answer != 'e') {
             System.out.println("Encrypt or decrypt?");
@@ -66,6 +78,12 @@ public class Encrypt {
         
         System.setOut(out);
         System.out.println(res);
+        playSound(audioIn, "wav/finish.wav");
+        try {
+            Thread.sleep(2000);
+        } catch(Exception e) {
+            System.out.println(e);
+        }
     }
     
     public static String endecryptFile(Scanner fileIn, char answer) {
@@ -108,5 +126,19 @@ public class Encrypt {
             }
         }
         return encrypted + "\n";
-    }  
+    }
+
+    public static void playSound(AudioInputStream audioIn, String fileName) {
+        try {
+            audioIn = AudioSystem.getAudioInputStream(new File(fileName));
+            Clip clip = AudioSystem.getClip();
+            clip.open(audioIn);
+            FloatControl gainControl = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
+            gainControl.setValue(-30f);
+            clip.start();
+        } catch(Exception e){
+            System.out.println(e);
+            System.exit(1);
+        }
+    }
 }
