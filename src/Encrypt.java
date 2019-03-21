@@ -80,7 +80,7 @@ public class Encrypt {
         System.out.println(res);
         playSound(audioIn, "wav/finish.wav");
         try {
-            Thread.sleep(2000);
+            Thread.sleep(2500);
         } catch(Exception e) {
             System.out.println(e);
         }
