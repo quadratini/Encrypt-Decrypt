@@ -10,7 +10,9 @@
 * @verison 03/17/2019
 *
 */
-import java.nio.file.Files;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
 import java.util.Scanner;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -18,7 +20,7 @@ import java.io.PrintStream;
 import java.io.FileOutputStream;
 
 public class Encrypt {
-    public static final String FILES_DIR = "files/";
+    public static final String FILES_DIR = "";
 
     public static void main(String[] args) {
 
@@ -27,6 +29,7 @@ public class Encrypt {
         PrintStream out;
         char answer = ' ';
 
+        gui();
         // Tries to find an input file
         while (true) {
             try {
@@ -63,11 +66,11 @@ public class Encrypt {
         }
 
         String res = endecryptFile(fileIn, answer);
-        
+
         System.setOut(out);
         System.out.println(res);
     }
-    
+
     public static String endecryptFile(Scanner fileIn, char answer) {
         String encrypted = "";
         while (fileIn.hasNextLine()) {
@@ -108,5 +111,27 @@ public class Encrypt {
             }
         }
         return encrypted + "\n";
-    }  
+    }
+
+    public static void gui() {
+        JFrame frame = new JFrame("Chat Frame");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setSize(200, 200);
+
+        //Creating the MenuBar and adding components
+        JMenuBar mb = new JMenuBar();
+
+        //Creating the panel at bottom and adding components
+        JPanel panel = new JPanel(); // the panel is not visible in output
+        JButton send = new JButton("Encrypt");
+        JButton reset = new JButton("Decrypt");
+        panel.add(send);
+        panel.add(reset);
+
+
+        //Adding Components to the frame.
+        frame.getContentPane().add(BorderLayout.SOUTH, panel);
+        frame.getContentPane().add(BorderLayout.NORTH, mb);
+        frame.setVisible(true);
+    }
 }
