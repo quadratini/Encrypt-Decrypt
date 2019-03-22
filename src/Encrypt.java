@@ -13,6 +13,7 @@
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.Scanner;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -114,24 +115,50 @@ public class Encrypt {
     }
 
     public static void gui() {
-        JFrame frame = new JFrame("Chat Frame");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(200, 200);
+        Scanner in = new Scanner(System.in);
+        Scanner fileIn;
+        PrintStream out;
+        char answer = ' ';
 
-        //Creating the MenuBar and adding components
-        JMenuBar mb = new JMenuBar();
+
+
+        JFrame frame = new JFrame("Frame");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setSize(400,400);
 
         //Creating the panel at bottom and adding components
         JPanel panel = new JPanel(); // the panel is not visible in output
-        JButton send = new JButton("Encrypt");
-        JButton reset = new JButton("Decrypt");
-        panel.add(send);
-        panel.add(reset);
+        JButton encrypt = new JButton("Encrypt");
+        JButton decrypt = new JButton("Decrypt");
+        panel.add(encrypt);
+        panel.add(decrypt);
 
+        JLabel whichFile = new JLabel("File Name:");
+        whichFile.setBounds(50,50,100,30);
+
+        JTextField inFileTextField = new JTextField();
+        inFileTextField.setBounds(50,50,150,20);
+        panel.add(whichFile);
+        panel.add(inFileTextField);
+        String inFileTextBox = inFileTextField.getText();
+
+        encrypt.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                System.out.println("ENCRYPTING");
+
+            }
+        });
+
+        decrypt.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                System.out.println("Decrypting");
+
+            }
+        });
 
         //Adding Components to the frame.
         frame.getContentPane().add(BorderLayout.SOUTH, panel);
-        frame.getContentPane().add(BorderLayout.NORTH, mb);
         frame.setVisible(true);
     }
+
 }
