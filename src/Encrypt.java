@@ -13,6 +13,9 @@
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.nio.file.Paths;
 import java.util.Scanner;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -81,7 +84,9 @@ public class Encrypt {
 
         JFrame frame = new JFrame("Frame");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(400,200);
+        frame.setSize(450,200);
+
+        JFileChooser inFileChooser = new JFileChooser(FILES_DIR);
 
         //Creating the panel at bottom and adding components
         JPanel panel = new JPanel(); // the panel is not visible in output
@@ -90,13 +95,23 @@ public class Encrypt {
 
         JLabel whichFile = new JLabel("Input File:");
         whichFile.setBounds(50,50,100,30);
-        JLabel outputFile = new JLabel("Output File:");
+        JLabel outputFile = new JLabel("Output Filename:");
         outputFile.setBounds(50,50,100,30);
 
         JTextField inFileTextField = new JTextField(10);
         inFileTextField.setBounds(50,50,100,30);
         JTextField outFileTextField = new JTextField(10);
         outFileTextField.setBounds(50,50,100,30);
+
+        inFileTextField.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                int returnVal = inFileChooser.showOpenDialog(frame);
+                if (returnVal == JFileChooser.APPROVE_OPTION) {
+                    inFileTextField.setText(inFileChooser.getSelectedFile().getAbsolutePath());
+                }
+            }
+        });
 
         panel.add(whichFile);
         panel.add(inFileTextField);
@@ -114,7 +129,7 @@ public class Encrypt {
                     try {
                         String inFileTextBox = inFileTextField.getText();
                         fileName = inFileTextBox;
-                        File file = new File(FILES_DIR + fileName);
+                        File file = new File(fileName);
                         if (!file.exists()) {
                             throw new FileNotFoundException();
                         }
