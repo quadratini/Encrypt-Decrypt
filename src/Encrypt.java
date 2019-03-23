@@ -32,46 +32,6 @@ public class Encrypt {
 
         // full gui program version performed here.
         gui();
-
-        // Tries to find an input file
-        while (true) {
-            try {
-                System.out.println("File to encrypt/decrypt:");
-                String fileName = FILES_DIR + in.next();
-                File file = new File(fileName);
-                if (!file.exists()) {
-                    throw new FileNotFoundException();
-                }
-                fileIn = new Scanner(new File(fileName));
-                break;
-            } catch (Exception e) {
-                System.out.println("Can't find file.");
-            }
-        }
-
-        // Tries to make an output file
-        while (true) {
-            try {
-                System.out.println("Output File:");
-                String outFile = FILES_DIR + in.next();
-                out = new PrintStream(new FileOutputStream(outFile));
-                break;
-            } catch (Exception e) {
-                System.out.println("Cannot create output file.");
-            }
-        }
-
-        // Asks if user wants to encrypt or decrypt
-        while (answer != 'd' && answer != 'e') {
-            System.out.println("Encrypt or decrypt?");
-            String nextIn = in.next();
-            answer = nextIn.charAt(0);
-        }
-
-        String res = endecryptFile(fileIn, answer);
-
-        System.setOut(out);
-        System.out.println(res);
     }
 
     public static String endecryptFile(Scanner fileIn, char answer) {
@@ -154,11 +114,11 @@ public class Encrypt {
                     try {
                         String inFileTextBox = inFileTextField.getText();
                         fileName = inFileTextBox;
-                        File file = new File(fileName);
+                        File file = new File(FILES_DIR + fileName);
                         if (!file.exists()) {
                             throw new FileNotFoundException();
                         }
-                        fileIn = new Scanner(new File(fileName));
+                        fileIn = new Scanner(file);
                         break;
                     } catch (Exception ex) {
                         System.out.println("Can't find file.");
@@ -168,7 +128,7 @@ public class Encrypt {
                 while (!flag) {
                     try {
                         String outFile = outFileTextField.getText();
-                        out = new PrintStream(new FileOutputStream(outFile));
+                        out = new PrintStream(new FileOutputStream(FILES_DIR + outFile));
                         break;
                     } catch (Exception ex) {
                         System.out.println("Cannot create output file.");
@@ -200,11 +160,11 @@ public class Encrypt {
                     try {
                         String inFileTextBox = inFileTextField.getText();
                         fileName = inFileTextBox;
-                        File file = new File(fileName);
+                        File file = new File(FILES_DIR + fileName);
                         if (!file.exists()) {
                             throw new FileNotFoundException();
                         }
-                        fileIn = new Scanner(new File(fileName));
+                        fileIn = new Scanner(file);
                         break;
                     } catch (Exception ex) {
                         System.out.println("Can't find file.");
@@ -214,7 +174,7 @@ public class Encrypt {
                 while (!flag) {
                     try {
                         String outFile = outFileTextField.getText();
-                        out = new PrintStream(new FileOutputStream(outFile));
+                        out = new PrintStream(new FileOutputStream(FILES_DIR + outFile));
                         break;
                     } catch (Exception ex) {
                         System.out.println("Cannot create output file.");
