@@ -122,47 +122,39 @@ public class Encrypt {
 
         encrypt.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                boolean flag = false;
                 String fileName = "";
 
-                while (!flag) {
-                    try {
-                        String inFileTextBox = inFileTextField.getText();
-                        fileName = inFileTextBox;
-                        File file = new File(fileName);
-                        if (!file.exists()) {
-                            throw new FileNotFoundException();
-                        }
-                        fileIn = new Scanner(file);
-                        break;
-                    } catch (Exception ex) {
-                        System.out.println("Can't find file.");
-                        flag = true;
+                try {
+                    String inFileTextBox = inFileTextField.getText();
+                    fileName = inFileTextBox;
+                    File file = new File(fileName);
+                    if (!file.exists()) {
+                        throw new FileNotFoundException();
                     }
-                }
-                while (!flag) {
-                    try {
-                        String outFile = outFileTextField.getText();
-                        out = new PrintStream(new FileOutputStream(FILES_DIR + outFile));
-                        break;
-                    } catch (Exception ex) {
-                        System.out.println("Cannot create output file.");
-                        flag = true;
-                    }
+                    fileIn = new Scanner(file);
+                } catch (Exception ex) {
+                    System.out.println("Can't find file.");
+                    return;
                 }
 
-                if (!flag) {
-                    String encrypted = "";
-                    while (fileIn.hasNextLine()) {
-                        String line = fileIn.nextLine();
-                        String newWord = "";
-                        newWord = encrypt(line);
-                        encrypted += newWord;
-                    }
-                    System.out.println(fileName + " encrypted.");
-                    System.setOut(out);
-                    System.out.println(encrypted);
+                try {
+                    String outFile = outFileTextField.getText();
+                    out = new PrintStream(new FileOutputStream(FILES_DIR + outFile));
+                } catch (Exception ex) {
+                    System.out.println("Cannot create output file.");
+                    return;
                 }
+
+                String encrypted = "";
+                while (fileIn.hasNextLine()) {
+                    String line = fileIn.nextLine();
+                    String newWord = "";
+                    newWord = encrypt(line);
+                    encrypted += newWord;
+                }
+                System.out.println(fileName + " encrypted.");
+                System.setOut(out);
+                System.out.println(encrypted);
             }
         });
 
@@ -171,43 +163,35 @@ public class Encrypt {
                 boolean flag = false;
                 String fileName = "";
 
-                while (!flag) {
-                    try {
-                        String inFileTextBox = inFileTextField.getText();
-                        fileName = inFileTextBox;
-                        File file = new File(FILES_DIR + fileName);
-                        if (!file.exists()) {
-                            throw new FileNotFoundException();
-                        }
-                        fileIn = new Scanner(file);
-                        break;
-                    } catch (Exception ex) {
-                        System.out.println("Can't find file.");
-                        flag = true;
+                try {
+                    String inFileTextBox = inFileTextField.getText();
+                    fileName = inFileTextBox;
+                    File file = new File(fileName);
+                    if (!file.exists()) {
+                        throw new FileNotFoundException();
                     }
+                    fileIn = new Scanner(file);
+                } catch (Exception ex) {
+                    System.out.println("Can't find file.");
+                    return;
                 }
-                while (!flag) {
-                    try {
-                        String outFile = outFileTextField.getText();
-                        out = new PrintStream(new FileOutputStream(FILES_DIR + outFile));
-                        break;
-                    } catch (Exception ex) {
-                        System.out.println("Cannot create output file.");
-                        flag = true;
-                    }
+                try {
+                    String outFile = outFileTextField.getText();
+                    out = new PrintStream(new FileOutputStream(FILES_DIR + outFile));
+                } catch (Exception ex) {
+                    System.out.println("Cannot create output file.");
+                    return;
                 }
-                if (!flag) {
-                    String decrypted = "";
-                    while (fileIn.hasNextLine()) {
-                        String line = fileIn.nextLine();
-                        String newWord = "";
-                        newWord = decrypt(line);
-                        decrypted += newWord;
-                    }
-                    System.out.println(fileName + " decrypted.");
-                    System.setOut(out);
-                    System.out.println(decrypted);
+                String decrypted = "";
+                while (fileIn.hasNextLine()) {
+                    String line = fileIn.nextLine();
+                    String newWord = "";
+                    newWord = decrypt(line);
+                    decrypted += newWord;
                 }
+                System.out.println(fileName + " decrypted.");
+                System.setOut(out);
+                System.out.println(decrypted);
             }
         });
 
