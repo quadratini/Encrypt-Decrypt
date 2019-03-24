@@ -170,6 +170,7 @@ public class Encrypt {
                 if (click % 4 == 0) {
                     outputLabel.setText("You only have to click ONCE, FOOL");
                     outFileTextField.setVisible(false);
+                    playSound(audioIn, "wav/morde.wav");
                 } else if (outputLabel.getText().equals("Output Filename: ")) {
                     outputLabel.setText("Output Pilename: ");
                 } else {
