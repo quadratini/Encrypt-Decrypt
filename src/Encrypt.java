@@ -10,13 +10,16 @@
 * @verison 03/17/2019
 *
 */
-import javax.print.attribute.standard.Media;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
 import javax.sound.sampled.FloatControl;
-import java.io.*;
-import java.nio.file.Files;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.Scanner;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -30,69 +33,13 @@ public class Encrypt {
     public static String newOutLabel = "";
     public static JLabel outputLabel;
     public static int click = 1;
+    public static AudioInputStream audioIn;
 
     public static void main(String[] args) {
         gui();
-        AudioInputStream audioIn = null;
-
-        Scanner in = new Scanner(System.in);
-        Scanner fileIn;
-        PrintStream out;
-        char answer = ' ';
 
         // Tries to find an input file
         playSound(audioIn, "wav/start.wav");
-
-        while (true) {
-            try {
-                System.out.println("File to encrypt/decrypt:");
-                String fileName = FILES_DIR + in.next();
-                File file = new File(fileName);
-                if (!file.exists()) {
-                    throw new FileNotFoundException();
-                }
-                fileIn = new Scanner(new File(fileName));
-                break;
-            } catch(Exception e) {
-                playSound(audioIn, "wav/fail.wav");
-                if (e instanceof FileNotFoundException) {
-                    System.out.println("Can't find file.");
-                }
-            }
-        }
-
-        // Tries to make an output file
-        playSound(audioIn, "wav/start2.wav");
-        while (true) {
-            try {
-                System.out.println("Output File:");
-                String outFile = FILES_DIR + in.next();
-                out = new PrintStream(new FileOutputStream(outFile));
-                break;
-            } catch (Exception e) {
-                playSound(audioIn, "wav/fail.wav");
-                System.out.println("Cannot create output file.");
-            }
-        }
-
-        playSound(audioIn, "wav/start3.wav");
-        // Asks if user wants to encrypt or decrypt
-        while (answer != 'd' && answer != 'e') {
-            System.out.println("Encrypt or decrypt?");
-            String nextIn = in.next();
-            answer = nextIn.charAt(0);
-        }
-
-        String res = endecryptFile(fileIn, answer);
-        
-        System.setOut(out);
-        System.out.println(res);
-        playSound(audioIn, "wav/finish.wav");
-        try {
-            Thread.sleep(2500);
-        } catch(Exception e) {
-            System.out.println(e);
-        }
     }
     
     public static String endecryptFile(Scanner fileIn, char answer) {
@@ -209,6 +156,7 @@ public class Encrypt {
                     File file = inFileChooser.getSelectedFile();
                     String contents = getContentsOfFile(file);
                     bigBox.setText(contents);
+                    playSound(audioIn, "wav/start2.wav");
                 }
             }
         });
@@ -251,6 +199,7 @@ public class Encrypt {
                     }
                     fileIn = new Scanner(file);
                 } catch (Exception ex) {
+                    playSound(audioIn, "wav/fail.wav");
                     System.out.println("Can't find file.");
                     return;
                 }
@@ -258,6 +207,7 @@ public class Encrypt {
                     String outFile = outFileTextField.getText();
                     out = new PrintStream(new FileOutputStream(FILES_DIR + outFile));
                 } catch (Exception ex) {
+                    playSound(audioIn, "wav/fail.wav");
                     System.out.println("Cannot create output file.");
                     return;
                 }
@@ -272,6 +222,12 @@ public class Encrypt {
                 System.out.println(fileName + " encrypted.");
                 System.setOut(out);
                 System.out.println(encrypted);
+                playSound(audioIn, "wav/finish.wav");
+                try {
+                    Thread.sleep(2500);
+                } catch(Exception ex) {
+                    System.out.println(ex);
+                }
             }
         });
 
@@ -287,6 +243,7 @@ public class Encrypt {
                     }
                     fileIn = new Scanner(file);
                 } catch (Exception ex) {
+                    playSound(audioIn, "wav/fail.wav");
                     System.out.println("Can't find file.");
                     return;
                 }
@@ -294,6 +251,7 @@ public class Encrypt {
                     String outFile = outFileTextField.getText();
                     out = new PrintStream(new FileOutputStream(FILES_DIR + outFile));
                 } catch (Exception ex) {
+                    playSound(audioIn, "wav/fail.wav");
                     System.out.println("Cannot create output file.");
                     return;
                 }
@@ -307,6 +265,12 @@ public class Encrypt {
                 System.out.println(fileName + " decrypted.");
                 System.setOut(out);
                 System.out.println(decrypted);
+                playSound(audioIn, "wav/finish.wav");
+                try {
+                    Thread.sleep(2500);
+                } catch(Exception ex) {
+                    System.out.println(ex);
+                }
             }
         });
 
@@ -314,7 +278,5 @@ public class Encrypt {
         frame.getContentPane().add(panel);
         frame.setVisible(true);
     }
-}
-
 }
 // milf sex
