@@ -7,15 +7,15 @@
 * outputs file to the outputfile named.
 *
 * @author Ronny Ritprasert
-* @verison 03/22/2019
+* @verison 03/23/2019
 *
 */
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.nio.file.Paths;
 import java.util.Scanner;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -26,13 +26,11 @@ public class Encrypt {
     public static final String FILES_DIR = "files\\";
     public static Scanner fileIn;
     public static PrintStream out;
+    public static String newOutLabel = "";
+    public static JLabel outputLabel;
+    public static int click = 1;
 
     public static void main(String[] args) {
-
-        Scanner in = new Scanner(System.in);
-        Scanner fileIn;
-        char answer = ' ';
-
         // full gui program version performed here.
         gui();
     }
@@ -47,7 +45,6 @@ public class Encrypt {
             } else {
                 newWord = decrypt(line);
             }
-
             encrypted += newWord;
         }
         return encrypted;
@@ -79,12 +76,29 @@ public class Encrypt {
         return encrypted + "\n";
     }
 
+    public static String getContentsOfFile(File file) {
+        //have u seen bohemian rhapsody, i think its good i heard
+        String allOfIt = "";
+
+        try {
+            Scanner sex = new Scanner(file);
+            while (sex.hasNextLine()) {
+                allOfIt += sex.nextLine() + "\n";
+            }
+        } catch (Exception e) {
+            return "";
+        }
+        return allOfIt;
+    }
+
     // Duplicate code, could probably simplify later.
     public static void gui() {
 
+        newOutLabel = "Output Filename: ";
+
         JFrame frame = new JFrame("Frame");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(450,200);
+        frame.setSize(450,250);
 
         JFileChooser inFileChooser = new JFileChooser(FILES_DIR);
 
@@ -93,68 +107,106 @@ public class Encrypt {
         JButton encrypt = new JButton("Encrypt");
         JButton decrypt = new JButton("Decrypt");
 
-        JLabel whichFile = new JLabel("Input File:");
-        whichFile.setBounds(50,50,100,30);
-        JLabel outputFile = new JLabel("Output Filename:");
-        outputFile.setBounds(50,50,100,30);
+        JLabel inputLabel = new JLabel("Input File:");
+        inputLabel.setBounds(50,50,100,30);
+        outputLabel = new JLabel(newOutLabel);
+        outputLabel.setBounds(50,50,100,30);
 
         JTextField inFileTextField = new JTextField(10);
         inFileTextField.setBounds(50,50,100,30);
         JTextField outFileTextField = new JTextField(10);
         outFileTextField.setBounds(50,50,100,30);
 
+        JTextArea bigBox = new JTextArea(9,40);
+        bigBox.setEditable(false);
+        bigBox.setBackground(new Color(220,220,220));
+        JScrollPane scroll = new JScrollPane(bigBox);
+        frame.setResizable(false);
+
         inFileTextField.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
+                super.mouseClicked(e);
                 int returnVal = inFileChooser.showOpenDialog(frame);
                 if (returnVal == JFileChooser.APPROVE_OPTION) {
                     inFileTextField.setText(inFileChooser.getSelectedFile().getAbsolutePath());
+                    //chop on head
+                    File file = inFileChooser.getSelectedFile();
+                    String contents = getContentsOfFile(file);
+                    bigBox.setText(contents);
                 }
             }
         });
 
-        panel.add(whichFile);
+        outputLabel.addMouseListener(new MouseAdapter() {
+            // anotehr way could have done it with # of clicks and using %.
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                super.mouseClicked(e);
+                outFileTextField.setVisible(true);
+                if (click % 4 == 0) {
+                    outputLabel.setText("You only have to click ONCE, FOOL");
+                    outFileTextField.setVisible(false);
+                }
+                else if (outputLabel.getText().equals("Output Filename: ")) {
+                    outputLabel.setText("Output Pilename: ");
+                } else {
+                    outputLabel.setText("Output Filename: ");
+                }
+                click++;
+            }
+        });
+
+        panel.add(inputLabel);
         panel.add(inFileTextField);
-        panel.add(outputFile);
+        panel.add(outputLabel);
         panel.add(outFileTextField);
         panel.add(encrypt);
         panel.add(decrypt);
+        panel.add(scroll); //TAKE THIS SCROLL
 
         encrypt.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
+                boolean flag = false;
                 String fileName = "";
 
-                try {
-                    String inFileTextBox = inFileTextField.getText();
-                    fileName = inFileTextBox;
-                    File file = new File(fileName);
-                    if (!file.exists()) {
-                        throw new FileNotFoundException();
+                while (!flag) {
+                    try {
+                        fileName = inFileTextField.getText();
+                        File file = new File(fileName);
+                        if (!file.exists()) {
+                            throw new FileNotFoundException();
+                        }
+                        fileIn = new Scanner(file);
+                        break;
+                    } catch (Exception ex) {
+                        System.out.println("Can't find file.");
+                        flag = true;
                     }
-                    fileIn = new Scanner(file);
-                } catch (Exception ex) {
-                    System.out.println("Can't find file.");
-                    return;
+                }
+                while (!flag) {
+                    try {
+                        String outFile = outFileTextField.getText();
+                        out = new PrintStream(new FileOutputStream(FILES_DIR + outFile));
+                        break;
+                    } catch (Exception ex) {
+                        System.out.println("Cannot create output file.");
+                        flag = true;
+                    }
                 }
 
-                try {
-                    String outFile = outFileTextField.getText();
-                    out = new PrintStream(new FileOutputStream(FILES_DIR + outFile));
-                } catch (Exception ex) {
-                    System.out.println("Cannot create output file.");
-                    return;
+                if (!flag) {
+                    String encrypted = "";
+                    while (fileIn.hasNextLine()) {
+                        String line = fileIn.nextLine();
+                        String newWord;
+                        newWord = encrypt(line);
+                        encrypted += newWord;
+                    }
+                    System.out.println(fileName + " encrypted.");
+                    System.setOut(out);
+                    System.out.println(encrypted);
                 }
-
-                String encrypted = "";
-                while (fileIn.hasNextLine()) {
-                    String line = fileIn.nextLine();
-                    String newWord = "";
-                    newWord = encrypt(line);
-                    encrypted += newWord;
-                }
-                System.out.println(fileName + " encrypted.");
-                System.setOut(out);
-                System.out.println(encrypted);
             }
         });
 
@@ -163,35 +215,42 @@ public class Encrypt {
                 boolean flag = false;
                 String fileName = "";
 
-                try {
-                    String inFileTextBox = inFileTextField.getText();
-                    fileName = inFileTextBox;
-                    File file = new File(fileName);
-                    if (!file.exists()) {
-                        throw new FileNotFoundException();
+                while (!flag) {
+                    try {
+                        fileName = inFileTextField.getText();
+                        File file = new File(fileName);
+                        if (!file.exists()) {
+                            throw new FileNotFoundException();
+                        }
+                        fileIn = new Scanner(file);
+                        break;
+                    } catch (Exception ex) {
+                        System.out.println("Can't find file.");
+                        flag = true;
                     }
-                    fileIn = new Scanner(file);
-                } catch (Exception ex) {
-                    System.out.println("Can't find file.");
-                    return;
                 }
-                try {
-                    String outFile = outFileTextField.getText();
-                    out = new PrintStream(new FileOutputStream(FILES_DIR + outFile));
-                } catch (Exception ex) {
-                    System.out.println("Cannot create output file.");
-                    return;
+                while (!flag) {
+                    try {
+                        String outFile = outFileTextField.getText();
+                        out = new PrintStream(new FileOutputStream(FILES_DIR + outFile));
+                        break;
+                    } catch (Exception ex) {
+                        System.out.println("Cannot create output file.");
+                        flag = true;
+                    }
                 }
-                String decrypted = "";
-                while (fileIn.hasNextLine()) {
-                    String line = fileIn.nextLine();
-                    String newWord = "";
-                    newWord = decrypt(line);
-                    decrypted += newWord;
+                if (!flag) {
+                    String decrypted = "";
+                    while (fileIn.hasNextLine()) {
+                        String line = fileIn.nextLine();
+                        String newWord;
+                        newWord = decrypt(line);
+                        decrypted += newWord;
+                    }
+                    System.out.println(fileName + " decrypted.");
+                    System.setOut(out);
+                    System.out.println(decrypted);
                 }
-                System.out.println(fileName + " decrypted.");
-                System.setOut(out);
-                System.out.println(decrypted);
             }
         });
 
