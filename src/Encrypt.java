@@ -7,15 +7,15 @@
 * outputs file to the outputfile named.
 *
 * @author Ronny Ritprasert
-* @verison 03/22/2019
+* @verison 03/23/2019
 *
 */
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.nio.file.Paths;
 import java.util.Scanner;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -28,13 +28,9 @@ public class Encrypt {
     public static PrintStream out;
     public static String newOutLabel = "";
     public static JLabel outputLabel;
+    public static int click = 1;
 
     public static void main(String[] args) {
-
-        Scanner in = new Scanner(System.in);
-        Scanner fileIn;
-        char answer = ' ';
-
         // full gui program version performed here.
         gui();
     }
@@ -49,7 +45,6 @@ public class Encrypt {
             } else {
                 newWord = decrypt(line);
             }
-
             encrypted += newWord;
         }
         return encrypted;
@@ -81,6 +76,21 @@ public class Encrypt {
         return encrypted + "\n";
     }
 
+    public static String getContentsOfFile(File file) {
+        //have u seen bohemian rhapsody, i think its good i heard
+        String allOfIt = "";
+
+        try {
+            Scanner sex = new Scanner(file);
+            while (sex.hasNextLine()) {
+                allOfIt += sex.nextLine() + "\n";
+            }
+        } catch (Exception e) {
+            return "";
+        }
+        return allOfIt;
+    }
+
     // Duplicate code, could probably simplify later.
     public static void gui() {
 
@@ -88,7 +98,7 @@ public class Encrypt {
 
         JFrame frame = new JFrame("Frame");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(450,200);
+        frame.setSize(450,250);
 
         JFileChooser inFileChooser = new JFileChooser(FILES_DIR);
 
@@ -107,12 +117,23 @@ public class Encrypt {
         JTextField outFileTextField = new JTextField(10);
         outFileTextField.setBounds(50,50,100,30);
 
+        JTextArea bigBox = new JTextArea(9,40);
+        bigBox.setEditable(false);
+        bigBox.setBackground(new Color(220,220,220));
+        JScrollPane scroll = new JScrollPane(bigBox);
+        frame.setResizable(false);
+
         inFileTextField.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
+                super.mouseClicked(e);
                 int returnVal = inFileChooser.showOpenDialog(frame);
                 if (returnVal == JFileChooser.APPROVE_OPTION) {
                     inFileTextField.setText(inFileChooser.getSelectedFile().getAbsolutePath());
+                    //chop on head
+                    File file = inFileChooser.getSelectedFile();
+                    String contents = getContentsOfFile(file);
+                    bigBox.setText(contents);
                 }
             }
         });
@@ -121,11 +142,18 @@ public class Encrypt {
             // anotehr way could have done it with # of clicks and using %.
             @Override
             public void mouseClicked(MouseEvent e) {
-                if (outputLabel.getText().equalsIgnoreCase("Output Filename: ")) {
+                super.mouseClicked(e);
+                outFileTextField.setVisible(true);
+                if (click % 4 == 0) {
+                    outputLabel.setText("You only have to click ONCE, FOOL");
+                    outFileTextField.setVisible(false);
+                }
+                else if (outputLabel.getText().equals("Output Filename: ")) {
                     outputLabel.setText("Output Pilename: ");
                 } else {
                     outputLabel.setText("Output Filename: ");
                 }
+                click++;
             }
         });
 
@@ -135,6 +163,7 @@ public class Encrypt {
         panel.add(outFileTextField);
         panel.add(encrypt);
         panel.add(decrypt);
+        panel.add(scroll); //TAKE THIS SCROLL
 
         encrypt.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -189,7 +218,7 @@ public class Encrypt {
                 while (!flag) {
                     try {
                         fileName = inFileTextField.getText();
-                        File file = new File(FILES_DIR + fileName);
+                        File file = new File(fileName);
                         if (!file.exists()) {
                             throw new FileNotFoundException();
                         }
