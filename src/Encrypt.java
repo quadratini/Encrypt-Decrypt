@@ -16,13 +16,23 @@ import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
 import javax.sound.sampled.FloatControl;
 import java.io.*;
+import java.nio.file.Files;
 import java.util.Scanner;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.PrintStream;
+import java.io.FileOutputStream;
 
 public class Encrypt {
-    public static final String FILES_DIR = "files/";
+    public static final String FILES_DIR = "files\\";
+    public static Scanner fileIn;
+    public static PrintStream out;
+    public static String newOutLabel = "";
+    public static JLabel outputLabel;
+    public static int click = 1;
 
     public static void main(String[] args) {
-
+        gui();
         AudioInputStream audioIn = null;
 
         Scanner in = new Scanner(System.in);
@@ -140,5 +150,171 @@ public class Encrypt {
             System.exit(1);
         }
     }
+
+    public static String getContentsOfFile(File file) {
+        //have u seen bohemian rhapsody, i think its good i heard
+        String allOfIt = "";
+
+        try {
+            Scanner sex = new Scanner(file);
+            while (sex.hasNextLine()) {
+                allOfIt += sex.nextLine() + "\n";
+            }
+        } catch (Exception e) {
+            return "";
+        }
+        return allOfIt;
+    }
+
+    // Duplicate code, could probably simplify later.
+    public static void gui() {
+
+        newOutLabel = "Output Filename: ";
+
+        JFrame frame = new JFrame("Frame");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setSize(450, 250);
+
+        JFileChooser inFileChooser = new JFileChooser(FILES_DIR);
+
+        //Creating the panel at bottom and adding components
+        JPanel panel = new JPanel(); // the panel is not visible in output
+        JButton encrypt = new JButton("Encrypt");
+        JButton decrypt = new JButton("Decrypt");
+
+        JLabel inputLabel = new JLabel("Input File:");
+        inputLabel.setBounds(50, 50, 100, 30);
+        outputLabel = new JLabel(newOutLabel);
+        outputLabel.setBounds(50, 50, 100, 30);
+
+        JTextField inFileTextField = new JTextField(10);
+        inFileTextField.setBounds(50, 50, 100, 30);
+        JTextField outFileTextField = new JTextField(10);
+        outFileTextField.setBounds(50, 50, 100, 30);
+
+        JTextArea bigBox = new JTextArea(9, 40);
+        bigBox.setEditable(false);
+        bigBox.setBackground(new Color(220, 220, 220));
+        JScrollPane scroll = new JScrollPane(bigBox);
+        frame.setResizable(false);
+
+        inFileTextField.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                super.mouseClicked(e);
+                int returnVal = inFileChooser.showOpenDialog(frame);
+                if (returnVal == JFileChooser.APPROVE_OPTION) {
+                    inFileTextField.setText(inFileChooser.getSelectedFile().getAbsolutePath());
+                    //chop on head
+                    File file = inFileChooser.getSelectedFile();
+                    String contents = getContentsOfFile(file);
+                    bigBox.setText(contents);
+                }
+            }
+        });
+
+        outputLabel.addMouseListener(new MouseAdapter() {
+            // anotehr way could have done it with # of clicks and using %.
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                super.mouseClicked(e);
+                outFileTextField.setVisible(true);
+                if (click % 4 == 0) {
+                    outputLabel.setText("You only have to click ONCE, FOOL");
+                    outFileTextField.setVisible(false);
+                } else if (outputLabel.getText().equals("Output Filename: ")) {
+                    outputLabel.setText("Output Pilename: ");
+                } else {
+                    outputLabel.setText("Output Filename: ");
+                }
+                click++;
+            }
+        });
+
+        panel.add(inputLabel);
+        panel.add(inFileTextField);
+        panel.add(outputLabel);
+        panel.add(outFileTextField);
+        panel.add(encrypt);
+        panel.add(decrypt);
+        panel.add(scroll); //TAKE THIS SCROLL
+
+        encrypt.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                String fileName = "";
+
+                try {
+                    fileName = inFileTextField.getText();
+                    File file = new File(fileName);
+                    if (!file.exists()) {
+                        throw new FileNotFoundException();
+                    }
+                    fileIn = new Scanner(file);
+                } catch (Exception ex) {
+                    System.out.println("Can't find file.");
+                    return;
+                }
+                try {
+                    String outFile = outFileTextField.getText();
+                    out = new PrintStream(new FileOutputStream(FILES_DIR + outFile));
+                } catch (Exception ex) {
+                    System.out.println("Cannot create output file.");
+                    return;
+                }
+
+                String encrypted = "";
+                while (fileIn.hasNextLine()) {
+                    String line = fileIn.nextLine();
+                    String newWord;
+                    newWord = encrypt(line);
+                    encrypted += newWord;
+                }
+                System.out.println(fileName + " encrypted.");
+                System.setOut(out);
+                System.out.println(encrypted);
+            }
+        });
+
+        decrypt.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                String fileName = "";
+
+                try {
+                    fileName = inFileTextField.getText();
+                    File file = new File(fileName);
+                    if (!file.exists()) {
+                        throw new FileNotFoundException();
+                    }
+                    fileIn = new Scanner(file);
+                } catch (Exception ex) {
+                    System.out.println("Can't find file.");
+                    return;
+                }
+                try {
+                    String outFile = outFileTextField.getText();
+                    out = new PrintStream(new FileOutputStream(FILES_DIR + outFile));
+                } catch (Exception ex) {
+                    System.out.println("Cannot create output file.");
+                    return;
+                }
+                String decrypted = "";
+                while (fileIn.hasNextLine()) {
+                    String line = fileIn.nextLine();
+                    String newWord;
+                    newWord = decrypt(line);
+                    decrypted += newWord;
+                }
+                System.out.println(fileName + " decrypted.");
+                System.setOut(out);
+                System.out.println(decrypted);
+            }
+        });
+
+        //Adding Components to the frame.
+        frame.getContentPane().add(panel);
+        frame.setVisible(true);
+    }
+}
+
 }
 // milf sex
