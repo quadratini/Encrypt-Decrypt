@@ -26,6 +26,8 @@ public class Encrypt {
     public static final String FILES_DIR = "files\\";
     public static Scanner fileIn;
     public static PrintStream out;
+    public static String newOutLabel = "";
+    public static JLabel outputLabel;
 
     public static void main(String[] args) {
 
@@ -82,6 +84,8 @@ public class Encrypt {
     // Duplicate code, could probably simplify later.
     public static void gui() {
 
+        newOutLabel = "Output Filename: ";
+
         JFrame frame = new JFrame("Frame");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(450,200);
@@ -93,10 +97,10 @@ public class Encrypt {
         JButton encrypt = new JButton("Encrypt");
         JButton decrypt = new JButton("Decrypt");
 
-        JLabel whichFile = new JLabel("Input File:");
-        whichFile.setBounds(50,50,100,30);
-        JLabel outputFile = new JLabel("Output Filename:");
-        outputFile.setBounds(50,50,100,30);
+        JLabel inputLabel = new JLabel("Input File:");
+        inputLabel.setBounds(50,50,100,30);
+        outputLabel = new JLabel(newOutLabel);
+        outputLabel.setBounds(50,50,100,30);
 
         JTextField inFileTextField = new JTextField(10);
         inFileTextField.setBounds(50,50,100,30);
@@ -113,9 +117,21 @@ public class Encrypt {
             }
         });
 
-        panel.add(whichFile);
+        outputLabel.addMouseListener(new MouseAdapter() {
+            // anotehr way could have done it with # of clicks and using %.
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if (outputLabel.getText().equalsIgnoreCase("Output Filename: ")) {
+                    outputLabel.setText("Output Pilename: ");
+                } else {
+                    outputLabel.setText("Output Filename: ");
+                }
+            }
+        });
+
+        panel.add(inputLabel);
         panel.add(inFileTextField);
-        panel.add(outputFile);
+        panel.add(outputLabel);
         panel.add(outFileTextField);
         panel.add(encrypt);
         panel.add(decrypt);
@@ -127,8 +143,7 @@ public class Encrypt {
 
                 while (!flag) {
                     try {
-                        String inFileTextBox = inFileTextField.getText();
-                        fileName = inFileTextBox;
+                        fileName = inFileTextField.getText();
                         File file = new File(fileName);
                         if (!file.exists()) {
                             throw new FileNotFoundException();
@@ -155,7 +170,7 @@ public class Encrypt {
                     String encrypted = "";
                     while (fileIn.hasNextLine()) {
                         String line = fileIn.nextLine();
-                        String newWord = "";
+                        String newWord;
                         newWord = encrypt(line);
                         encrypted += newWord;
                     }
@@ -173,8 +188,7 @@ public class Encrypt {
 
                 while (!flag) {
                     try {
-                        String inFileTextBox = inFileTextField.getText();
-                        fileName = inFileTextBox;
+                        fileName = inFileTextField.getText();
                         File file = new File(FILES_DIR + fileName);
                         if (!file.exists()) {
                             throw new FileNotFoundException();
@@ -200,7 +214,7 @@ public class Encrypt {
                     String decrypted = "";
                     while (fileIn.hasNextLine()) {
                         String line = fileIn.nextLine();
-                        String newWord = "";
+                        String newWord;
                         newWord = decrypt(line);
                         decrypted += newWord;
                     }
