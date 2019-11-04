@@ -1,0 +1,45 @@
+pseudo code:
+ENCRYPT
+DECRYPT
+
+main
+  declare scanner object
+  prompt user for input
+  read input
+  for (i = 0; i < s.length; i++) {
+	char 
+  add amount to input to encrypt
+  output encryption
+
+
+ok
+now make it
+read from a text file
+and then output to a text file
+and make it ask u want to encrypt
+or decrypt
+
+
+skills to work on:
+instead of deleting all code try to edit
+
+
+pseudo code:
+
+read in file
+
+
+ok
+now make it
+read from a text file
+and then output to a text file
+and make it ask u want to encrypt
+or decrypt
+no enter sentence
+just make it read from a hardcoded file
+and then int
+print
+to a new file
+like
+read from input.txt
+and output to output.txt
