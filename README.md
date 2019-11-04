@@ -1,9 +1,9 @@
 # One of the first projects together
 
 ## The application
-![Encrypt](./images/encrypt window.png)
+![Encrypt](/images/encryptWindow.png)
 
 ## The file browser
-![browser](./images/file browser.png)
+![browser](/images/fileBrowser.png)
 
 ### Created by Yinghao Wang and Ronny Ritprasert
